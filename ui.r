@@ -1,4 +1,4 @@
-#R and Shiny adaptation of http://bl.ocks.org/4063318
+#R and Shiny adaptation of http://bl.ocks.org/4063663
 
 reactiveSvg <- function (outputId) 
 {
@@ -7,7 +7,7 @@ reactiveSvg <- function (outputId)
 
 
 shinyUI(pageWithSidebar(
-  headerPanel(title=HTML("Shiny and R adaptation of <a href = \"http://bl.ocks.org/4063318\">Mike Bostock's d3 Brushable Scatterplot</a>")),
+  headerPanel(title=HTML("Shiny and R adaptation of <a href = \"http://bl.ocks.org/4063663\">Mike Bostock's d3 Brushable Scatterplot</a>")),
   
   sidebarPanel(
               "This example explores the relationship of various Vanguard Funds representing different exposures.  Using Mike Bostock's
