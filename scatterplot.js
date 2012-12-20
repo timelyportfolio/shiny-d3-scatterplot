@@ -53,13 +53,19 @@ $.extend(networkOutputBinding, {
     },
     renderValue: function(el, data) {
     
+//remove old graph    
+d3.select(el).selectAll("svg").remove();
     
-    
-
 
 var width = 960,
     size = 150,
     padding = 19.5;
+        
+var svg = d3.select(el).selectAll("svg")
+      .attr("width", size * n + padding)
+      .attr("height", size * n + padding)
+    .append("g")
+      .attr("transform", "translate(" + padding + "," + padding / 2 + ")");
 
 var x = d3.scale.linear()
     .range([padding / 2, size - padding / 2]);
@@ -79,9 +85,9 @@ var yAxis = d3.svg.axis()
 
 var color = d3.scale.category10();
 
-d3.csv("www/flowers.csv", function(error, data) {
+//d3.csv("www/flowers.csv", function(error, data) {
   var domainByTrait = {},
-      traits = d3.keys(data[0]).filter(function(d) { return d !== "species"; }),
+      traits = d3.keys(data[0]).filter(function(d) { return d !== "date"; }),
       n = traits.length;
 
   traits.forEach(function(trait) {
@@ -98,11 +104,6 @@ d3.csv("www/flowers.csv", function(error, data) {
       .on("brush", brushmove)
       .on("brushend", brushend);
 
-  var svg = d3.select("body").append("svg")
-      .attr("width", size * n + padding)
-      .attr("height", size * n + padding)
-    .append("g")
-      .attr("transform", "translate(" + padding + "," + padding / 2 + ")");
 
   svg.selectAll(".x.axis")
       .data(traits)
@@ -189,7 +190,7 @@ d3.csv("www/flowers.csv", function(error, data) {
   }
 
   d3.select(self.frameElement).style("height", size * n + padding + 20 + "px");
-});
+//});
 
     
     
