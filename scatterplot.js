@@ -54,19 +54,14 @@ $.extend(networkOutputBinding, {
     renderValue: function(el, data) {
     
 //remove old graph    
-d3.select(el).selectAll("svg").remove();
+var svg = d3.select("#scatterplot").select("svg")
+                        .remove();
     
 
 var width = 960,
     size = 150,
     padding = 19.5;
         
-var svg = d3.select(el).selectAll("svg")
-      .attr("width", size * n + padding)
-      .attr("height", size * n + padding)
-    .append("g")
-      .attr("transform", "translate(" + padding + "," + padding / 2 + ")");
-
 var x = d3.scale.linear()
     .range([padding / 2, size - padding / 2]);
 
@@ -87,13 +82,19 @@ var color = d3.scale.category10();
 
 //d3.csv("www/flowers.csv", function(error, data) {
   var domainByTrait = {},
-      traits = d3.keys(data[0]).filter(function(d) { return d !== "date"; }),
+      traits = d3.keys(data[0]).filter(function(d) { return d !== "Date"; }),
       n = traits.length;
 
   traits.forEach(function(trait) {
-    domainByTrait[trait] = d3.extent(data, function(d) { return d[trait]; });
+    domainByTrait[trait] = d3.extent(data, function(d) { return +d[trait]; });
   });
-
+        
+//move the append svg down here since depends on n
+svg = d3.select("#scatterplot").append("svg")
+      .attr("width", size * n + padding)
+      .attr("height", size * n + padding)
+    .append("g")
+      .attr("transform", "translate(" + padding + "," + padding / 2 + ")");
   xAxis.tickSize(size * n);
   yAxis.tickSize(-size * n);
 
