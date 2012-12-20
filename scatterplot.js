@@ -153,7 +153,7 @@ svg = d3.select("#scatterplot").append("svg")
         .attr("cx", function(d) { return x(d[p.x]); })
         .attr("cy", function(d) { return y(d[p.y]); })
         .attr("r", 3)
-        .style("fill", function(d) { return color(d.species); });
+        .style("fill", function(d) { return color(p.y+(d[p.y]>0)); });
 
     cell.call(brush);
   }
