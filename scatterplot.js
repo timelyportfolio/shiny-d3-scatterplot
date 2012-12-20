@@ -1,3 +1,5 @@
+<--code almost entirely from http://bl.ocks.org/4063318 Mike Bostock's d3 Brushable Scatterplot -->
+
 <style>
 
 svg {
