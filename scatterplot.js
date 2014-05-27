@@ -1,5 +1,5 @@
 <!--code almost entirely from http://bl.ocks.org/4063663 Mike Bostock's d3 Brushable Scatterplot -->
-
+<!-- Shiny binding from https://github.com/timelyportfolio/shiny-d3-scatterplot -->
 <style>
 
 svg {
@@ -26,10 +26,10 @@ svg {
 }
 
 circle {
-  fill-opacity: .7;
+  fill-opacity: .6;
 }
 
-circle.hidden {
+circle.greyed {
   fill: #ccc !important;
 }
 
@@ -55,9 +55,9 @@ var svg = d3.select("#scatterplot").select("svg")
                         .remove();
     
 
-var width = 960,
-    size = 150,
-    padding = 19.5;
+var width = 100%,
+    size = 10%,
+    padding = 20;
         
 var x = d3.scale.linear()
     .range([padding / 2, size - padding / 2]);
@@ -76,15 +76,15 @@ var yAxis = d3.svg.axis()
     .ticks(5);
 
 var color = d3.scale.category10();
-
-//d3.csv("www/flowers.csv", function(error, data) {
+  
   var domainByTrait = {},
-      traits = d3.keys(data[0]).filter(function(d) { return d !== "Date"; }),
+      traits = d3.keys(data[0]),
       n = traits.length;
 
   traits.forEach(function(trait) {
     domainByTrait[trait] = d3.extent(data, function(d) { return +d[trait]; });
   });
+  //console.log(data);
         
 //move the append svg down here since depends on n
 svg = d3.select("#scatterplot").append("svg")
@@ -101,7 +101,6 @@ svg = d3.select("#scatterplot").append("svg")
       .on("brushstart", brushstart)
       .on("brush", brushmove)
       .on("brushend", brushend);
-
 
   svg.selectAll(".x.axis")
       .data(traits)
@@ -151,8 +150,8 @@ svg = d3.select("#scatterplot").append("svg")
         .attr("cy", function(d) { return y(d[p.y]); })
         .attr("r", 3)
         .style("fill", function(d) { return color(p.y+(d[p.y]>0)); });
-
     cell.call(brush);
+    
   }
 
   var brushCell;
@@ -170,7 +169,7 @@ svg = d3.select("#scatterplot").append("svg")
   // Highlight the selected circles.
   function brushmove(p) {
     var e = brush.extent();
-    svg.selectAll("circle").classed("hidden", function(d) {
+    svg.selectAll("circle").classed("greyed", function(d) {
       return e[0][0] > d[p.x] || d[p.x] > e[1][0]
           || e[0][1] > d[p.y] || d[p.y] > e[1][1];
     });
@@ -178,22 +177,24 @@ svg = d3.select("#scatterplot").append("svg")
 
   // If the brush is empty, select all circles.
   function brushend() {
-    if (brush.empty()) svg.selectAll(".hidden").classed("hidden", false);
+    if (brush.empty()){
+    svg.selectAll(".greyed").classed("greyed", false);
+    } 
+     var circleStates = d3.select('svg').select('g.cell').selectAll('circle')[0].map(function(d) {return d.className['baseVal']});
+     console.log(circleStates);
+     Shiny.onInputChange("mydata", circleStates);
   }
+  
 
   function cross(a, b) {
     var c = [], n = a.length, m = b.length, i, j;
     for (i = -1; ++i < n;) for (j = -1; ++j < m;) c.push({x: a[i], i: i, y: b[j], j: j});
+    //console.log(c);
     return c;
   }
 
   d3.select(self.frameElement).style("height", size * n + padding + 20 + "px");
-//});
 
-    
-    
-    
-    
     }
   });
   Shiny.outputBindings.register(networkOutputBinding, 'timelyportfolio.networkbinding');

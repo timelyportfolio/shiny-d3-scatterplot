@@ -6,22 +6,30 @@ reactiveSvg <- function (outputId)
 }
 
 
-shinyUI(pageWithSidebar(
-  headerPanel(title=HTML("Shiny and R adaptation of <a href = \"http://bl.ocks.org/4063663\">Mike Bostock's d3 Brushable Scatterplot</a>")),
-  
-  sidebarPanel(selectInput(inputId="selection",label="Select Funds",choices=sort(names(dat)[-(ncol(dat))]),multiple=TRUE),
-              HTML("<br>"),
-              "This example explores the relationship of various Vanguard Funds representing different exposures.  Using Mike Bostock's
-               interactive d3 scatterplot example, we can more thorougly discover the relationships between these funds.  Try it out by highlighting 
-               portions of the scatterplot.  To remove the selection just click outside of the selection box.",
-               helpText(HTML("<br></br>Prices provided by Yahoo!Finance.<br></br>All source available on <a href = \"https://github.com/timelyportfolio/shiny-d3-scatterplot\">Github</a>"))
-              ),
-               
-  mainPanel(
-    includeHTML("scatterplot.js"),
-    reactiveSvg(outputId = "scatterplot")
+shinyUI(
+  fluidPage(
+    titlePanel(title="Shiny / d3.js Scatterplot", windowTitle="Scatterplot"),
+    fluidRow(
+      checkboxInput(inputId='showsettings', value=TRUE, label=h3("Display Settings"))
+    ),
+    conditionalPanel(
+      condition= "input.showsettings == true",
+      fluidRow(
+        column(2, fileInput('fileInput','Choose CSV File',accept=c('text/csv','text/comma-separated-values,text/plain'))),
+        column(1, checkboxInput('header', 'Header', TRUE)),
+        column(1, radioButtons('sep', 'Separator',c(Comma=',',Semicolon=';',Tab='\t'),',')),
+        column(1, radioButtons('dec', 'Decimal', c(Comma=',', Point='.'), '.')),
+        column(1, radioButtons('quote', 'Quote',c(None='','Double Quote'='"','Single Quote'="'"),'"')),
+        column(6, selectInput('columnSelection', label="Columns to display", choices=colnames(mtcars), selected=colnames(mtcars)[1:4],multiple=TRUE))
+        )
+      ),
+    fluidRow(
+      column(6,
+        includeHTML("scatterplot.js"),
+        reactiveSvg(outputId = "scatterplot")),
+      column(6,
+        dataTableOutput(outputId="outputTable")
+      )
+    )
   )
-  
-  )
-  
 )
