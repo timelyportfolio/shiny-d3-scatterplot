@@ -1,7 +1,9 @@
 ScattRplot - An interactive scatterplot
 ===========================================================================================================
 
-Mostly based on [TimelyPortfolio](https://github.com/timelyportfolio/shiny-d3-scatterplot), who did the R/Shiny Adaptation of [Mike Bostock's Amazing Interactive Scatterplot](http://bl.ocks.org/mbostock/4063663)
+Mostly based on [jfreels' fork](https://github.com/jfreels/shiny-d3-scatterplot) of [TimelyPortfolio  shiny-d3-scatterplot](https://github.com/timelyportfolio/shiny-d3-scatterplot), who did the R/Shiny Adaptation of [Mike Bostock's Amazing Interactive Scatterplot](http://bl.ocks.org/mbostock/4063663).
+
+
 
 This app adds a linked datatable view of the scatterplot selected elements, and lets the user upload a custom table (csv format) and explore it.
 
