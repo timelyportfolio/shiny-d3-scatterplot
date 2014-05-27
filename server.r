@@ -8,7 +8,7 @@ shinyServer(function(input, output, session) {
   
   observe({
     if (!is.null(input$fileInput)){
-      baseData$df <- read.csv(file=input$fileInput$datapath, header=input$header, sep=input$sep, quote=input$quote, dec=input$dec, stringsAsFactor=FALSE, check.names=TRUE)
+      baseData$df <- read.csv(file=input$fileInput$datapath, header=input$header, sep=input$sep, quote=input$quote, dec=input$dec, stringsAsFactor=FALSE, check.names=FALSE)
       updateColumns(session=session, columns=colnames(baseData$df[, sapply(baseData$df, is.numeric)]))
     }
   })

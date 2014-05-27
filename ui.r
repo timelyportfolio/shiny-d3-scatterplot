@@ -24,7 +24,7 @@ shinyUI(
     conditionalPanel(
       condition= "input.showsettings == true",
       fluidRow(
-        column(2, fileInput('fileInput','Choose CSV File',accept=c('text/csv','text/comma-separated-values,text/plain'))),
+        column(2, fileInput('fileInput','Choose CSV File',multiple=FALSE)),
         column(1, checkboxInput('header', 'Header', TRUE)),
         column(1, radioButtons('sep', 'Separator',c(Comma=',',Semicolon=';',Tab='\t'),',')),
         column(1, radioButtons('dec', 'Decimal', c(Comma=',', Point='.'), '.')),
