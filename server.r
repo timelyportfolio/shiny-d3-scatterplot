@@ -1,3 +1,6 @@
+#max upload = 15 Mo
+options(shiny.maxRequestSize = 15*1024^2)
+
 shinyServer(function(input, output, session) {
   
   baseData <- reactiveValues()
@@ -34,6 +37,19 @@ shinyServer(function(input, output, session) {
     }
     
   }, options = list(bPaginate = FALSE))
+
+
+output$downloadTable <- downloadHandler(
+  filename = "selectedData.csv",
+  content = function(file) {
+    dfFilter <- input$mydata
+    displayDF <- baseData$df
+    displayDF <- as.data.frame(cbind(names=row.names(displayDF), displayDF))
+        dfFilter[dfFilter==''] <- TRUE
+        dfFilter[dfFilter=='greyed'] <- FALSE
+        write.table(x=(displayDF[dfFilter == TRUE,, drop=FALSE]),file=file, row.names=FALSE, fileEncoding="utf8", sep=",")
+  }
+)
 })
 
 updateColumns <- function(session, columns, selection=""){

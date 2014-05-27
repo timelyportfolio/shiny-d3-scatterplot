@@ -37,7 +37,8 @@ shinyUI(
         includeHTML("scatterplot.js"),
         reactiveSvg(outputId = "scatterplot")),
       column(6,
-        dataTableOutput(outputId="outputTable")
+        dataTableOutput(outputId="outputTable"),
+        downloadButton(outputId='downloadTable', label='Download selection')
       )
     ),
     fluidRow(
