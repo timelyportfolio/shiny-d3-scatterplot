@@ -41,8 +41,11 @@ shinyUI(
       )
     ),
     fluidRow(
-      column(3, offset=9,
-             HTML("Created by <a href=\"http://www.parisgeo.cnrs.fr/spip.php?article6416&lang=en\">Robin Cura</a>, for the <a href=\"http://www.parisgeo.cnrs.fr\">UMR Géographie-cités</a>")
-             ))
+      column(12,
+             HTML("Created by <a href=\"http://www.parisgeo.cnrs.fr/spip.php?article6416&lang=en\">Robin Cura</a>, for the <a href=\"http://www.parisgeo.cnrs.fr\">UMR Géographie-cités</a>"),
+             tags$br(),
+             HTML("Published under <a href=\"http://www.gnu.org/licenses/agpl-3.0.html\">A-GPL v3 licence</a>. Code available on <a href=\"https://github.com/RCura/ScattRplot\">Github</a>")
+             )
+    )
   )
 )
