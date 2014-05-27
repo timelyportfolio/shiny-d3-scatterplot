@@ -1,7 +1,5 @@
 #max upload = 15 Mo
 options(shiny.maxRequestSize = 15*1024^2)
-options(shiny.reactlog=TRUE)
-options(show.error.messages = FALSE)
 
 shinyServer(function(input, output, session) {
   
@@ -18,15 +16,12 @@ shinyServer(function(input, output, session) {
   
   
   output$scatterplot <- reactive({
-    #print(input$columnSelection)
     if (!is.null(input$columnSelection)){
-      print(input$columnSelection)
       scatterData <- baseData$df
-      scatterData <- try(as.matrix(scatterData[,input$columnSelection]))
-      #print(scatterData)
+      scatterData <- as.matrix(scatterData[,input$columnSelection])
       return(scatterData)    
     } else {
-      try(return())
+     return()
     }    
   })
   

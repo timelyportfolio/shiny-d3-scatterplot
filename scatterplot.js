@@ -53,7 +53,7 @@ $.extend(networkOutputBinding, {
     
 //remove old graph    
 var svg = d3.select("#scatterplot").select("svg").remove();
-$("#scatterplot").contents()[0].nodeValue;
+$("#scatterplot").empty();
 
 var svgWidth = $(".shiny-network-output").width();
 var rowCount = data.length;
@@ -197,15 +197,6 @@ svg = d3.select("#scatterplot").append("svg")
     return c;
   }
   
-try {
-  var test = d3.select('#scatterplot')[0][0].firstChild.className;
-  if (test == "undefined") {
-    d3.select("#scatterplot")[0][0].firstChild.remove();
-  }
-}
-catch(err) {
-  console.log("alllllllright");
-}
 
   d3.select(self.frameElement).style("height", size * n + padding + 20 + "px");
 
