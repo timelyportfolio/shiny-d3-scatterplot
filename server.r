@@ -1,5 +1,7 @@
 #max upload = 15 Mo
 options(shiny.maxRequestSize = 15*1024^2)
+options(shiny.reactlog=TRUE)
+options(show.error.messages = FALSE)
 
 shinyServer(function(input, output, session) {
   
@@ -8,6 +10,7 @@ shinyServer(function(input, output, session) {
   
   observe({
     if (!is.null(input$fileInput)){
+      updateColumns(session=session, columns="")
       baseData$df <- read.csv(file=input$fileInput$datapath, header=input$header, sep=input$sep, quote=input$quote, dec=input$dec, stringsAsFactor=FALSE, check.names=FALSE)
       updateColumns(session=session, columns=colnames(baseData$df[, sapply(baseData$df, is.numeric)]))
     }
@@ -15,10 +18,17 @@ shinyServer(function(input, output, session) {
   
   
   output$scatterplot <- reactive({
-    scatterData <- baseData$df
-    scatterData <- as.matrix(scatterData[,input$columnSelection])
-    return(scatterData)
-    })
+    #print(input$columnSelection)
+    if (!is.null(input$columnSelection)){
+      print(input$columnSelection)
+      scatterData <- baseData$df
+      scatterData <- try(as.matrix(scatterData[,input$columnSelection]))
+      #print(scatterData)
+      return(scatterData)    
+    } else {
+      try(return())
+    }    
+  })
   
   output$outputTable <- renderDataTable({
     dfFilter <- input$mydata

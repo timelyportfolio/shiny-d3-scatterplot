@@ -49,10 +49,12 @@ $.extend(networkOutputBinding, {
       return $(scope).find('.shiny-network-output');
     },
     renderValue: function(el, data) {
+      if (data == null) return;
     
 //remove old graph    
-var svg = d3.select("#scatterplot").select("svg")
-                        .remove();
+var svg = d3.select("#scatterplot").select("svg").remove();
+$("#scatterplot").contents()[0].nodeValue;
+
 var svgWidth = $(".shiny-network-output").width();
 var rowCount = data.length;
 var colCount = Object.keys(data[0]).length;
@@ -61,7 +63,6 @@ var padding = 20;
 var relativeSize = (svgWidth / colCount) - (padding / colCount);
 var width = 100;
 var size = relativeSize;
-console.log(relativeSize);
 var pointRadius = Math.sqrt(relativeSize / Math.sqrt(rowCount));
 
         
@@ -186,7 +187,6 @@ svg = d3.select("#scatterplot").append("svg")
     svg.selectAll(".greyed").classed("greyed", false);
     } 
      var circleStates = d3.select('svg').select('g.cell').selectAll('circle')[0].map(function(d) {return d.className['baseVal']});
-     console.log(circleStates);
      Shiny.onInputChange("mydata", circleStates);
   }
   
@@ -194,9 +194,18 @@ svg = d3.select("#scatterplot").append("svg")
   function cross(a, b) {
     var c = [], n = a.length, m = b.length, i, j;
     for (i = -1; ++i < n;) for (j = -1; ++j < m;) c.push({x: a[i], i: i, y: b[j], j: j});
-    //console.log(c);
     return c;
   }
+  
+try {
+  var test = d3.select('#scatterplot')[0][0].firstChild.className;
+  if (test == "undefined") {
+    d3.select("#scatterplot")[0][0].firstChild.remove();
+  }
+}
+catch(err) {
+  console.log("alllllllright");
+}
 
   d3.select(self.frameElement).style("height", size * n + padding + 20 + "px");
 
