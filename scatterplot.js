@@ -53,11 +53,17 @@ $.extend(networkOutputBinding, {
 //remove old graph    
 var svg = d3.select("#scatterplot").select("svg")
                         .remove();
-    
+var svgWidth = $(".shiny-network-output").width();
+var rowCount = data.length;
+var colCount = Object.keys(data[0]).length;
 
-var width = 100%,
-    size = 10%,
-    padding = 20;
+var padding = 20;
+var relativeSize = (svgWidth / colCount) - (padding / colCount);
+var width = 100;
+var size = relativeSize;
+console.log(relativeSize);
+var pointRadius = Math.sqrt(relativeSize / Math.sqrt(rowCount));
+
         
 var x = d3.scale.linear()
     .range([padding / 2, size - padding / 2]);
@@ -84,7 +90,6 @@ var color = d3.scale.category10();
   traits.forEach(function(trait) {
     domainByTrait[trait] = d3.extent(data, function(d) { return +d[trait]; });
   });
-  //console.log(data);
         
 //move the append svg down here since depends on n
 svg = d3.select("#scatterplot").append("svg")
@@ -148,7 +153,7 @@ svg = d3.select("#scatterplot").append("svg")
       .enter().append("circle")
         .attr("cx", function(d) { return x(d[p.x]); })
         .attr("cy", function(d) { return y(d[p.y]); })
-        .attr("r", 3)
+        .attr("r", pointRadius)
         .style("fill", function(d) { return color(p.y+(d[p.y]>0)); });
     cell.call(brush);
     

@@ -7,10 +7,19 @@ reactiveSvg <- function (outputId)
 
 
 shinyUI(
-  fluidPage(
-    titlePanel(title="Shiny / d3.js Scatterplot", windowTitle="Scatterplot"),
+  fluidPage(theme = "simplex.bootstrap.min.css",
+    tags$head(tags$link(rel = "icon", type = "image/png", href = "favicon.png")),
+
     fluidRow(
-      checkboxInput(inputId='showsettings', value=TRUE, label=h3("Display Settings"))
+      column(1,
+             titlePanel(title=h1("ScattRplot"), windowTitle="ScattRplot")
+             ),
+      column(width=1, offset=10,
+             tags$img(src="logoUMR_fdbleu_cadretransparent.png", width="150px",  style="padding:10px;")
+      )
+    ),
+    fluidRow(
+      checkboxInput(inputId='showsettings', value=TRUE, label=h4("Display Settings"))
     ),
     conditionalPanel(
       condition= "input.showsettings == true",
@@ -30,6 +39,10 @@ shinyUI(
       column(6,
         dataTableOutput(outputId="outputTable")
       )
-    )
+    ),
+    fluidRow(
+      column(3, offset=9,
+             HTML("Created by <a href=\"http://www.parisgeo.cnrs.fr/spip.php?article6416&lang=en\">Robin Cura</a>, for the <a href=\"http://www.parisgeo.cnrs.fr\">UMR Géographie-cités</a>")
+             ))
   )
 )
