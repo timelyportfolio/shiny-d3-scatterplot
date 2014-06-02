@@ -59,7 +59,7 @@ var svgWidth = $(".shiny-network-output").width();
 var rowCount = data.length;
 var colCount = Object.keys(data[0]).length;
 
-var padding = 20;
+var padding = 40;
 var relativeSize = (svgWidth / colCount) - (padding / colCount);
 var width = 100;
 var size = relativeSize;
