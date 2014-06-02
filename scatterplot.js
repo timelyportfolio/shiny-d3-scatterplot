@@ -46,31 +46,43 @@ circle.greyed {
 var networkOutputBinding = new Shiny.OutputBinding();
 $.extend(networkOutputBinding, {
     find: function(scope) {
-      return $(scope).find('.shiny-network-output');
+      return $(scope).find('.shiny-scatterplot-output');
     },
     renderValue: function(el, data) {
+      var logscale = data[1];
+      var maxPadding = data[2];
+      data = data[0];
       if (data == null) return;
     
 //remove old graph    
 var svg = d3.select("#scatterplot").select("svg").remove();
 $("#scatterplot").empty();
 
-var svgWidth = $(".shiny-network-output").width();
+var svgWidth = $(".shiny-scatterplot-output").width();
 var rowCount = data.length;
 var colCount = Object.keys(data[0]).length;
 
-var padding = 40;
+var padding = maxPadding;
 var relativeSize = (svgWidth / colCount) - (padding / colCount);
 var width = 100;
 var size = relativeSize;
 var pointRadius = Math.sqrt(relativeSize / Math.sqrt(rowCount));
 
-        
-var x = d3.scale.linear()
+if (logscale == false) {
+  var x = d3.scale.linear()
+      .range([padding / 2, size - padding / 2]);
+  
+  var y = d3.scale.linear()
+      .range([size - padding / 2, padding / 2]);
+} else {
+  
+  var x = d3.scale.log()
     .range([padding / 2, size - padding / 2]);
-
-var y = d3.scale.linear()
+  
+  var y = d3.scale.log()
     .range([size - padding / 2, padding / 2]);
+}
+
 
 var xAxis = d3.svg.axis()
     .scale(x)

@@ -2,7 +2,7 @@
 
 reactiveSvg <- function (outputId) 
 {
-  HTML(paste("<div id=\"", outputId, "\" class=\"shiny-network-output\"><svg /></div>", sep=""))
+  HTML(paste("<div id=\"", outputId, "\" class=\"shiny-scatterplot-output\"><svg /></div>", sep=""))
 }
 
 
@@ -30,7 +30,8 @@ shinyUI(
         column(1, radioButtons('dec', 'Decimal', c(Comma=',', Point='.'), '.')),
         column(1, radioButtons('quote', 'Quote',c(None='','Double Quote'='"','Single Quote'="'"),'"')),
         column(6, selectInput('columnSelection', label="Columns to display", choices=colnames(mtcars), selected=colnames(mtcars)[1:4],multiple=TRUE))
-        )
+        ),
+      fluidRow(column(2, checkboxInput(inputId="logscale", label="Log scale ?", value=FALSE)))
       ),
     fluidRow(
       column(6,

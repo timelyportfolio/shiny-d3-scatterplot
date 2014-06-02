@@ -19,7 +19,8 @@ shinyServer(function(input, output, session) {
     if (!is.null(input$columnSelection)){
       scatterData <- baseData$df
       scatterData <- as.matrix(scatterData[,input$columnSelection])
-      return(scatterData)    
+      maxPadding <- ceiling(log10(max(scatterData))) * 10
+      return(list(scatterData, input$logscale, maxPadding))    
     } else {
      return()
     }    
