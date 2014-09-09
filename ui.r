@@ -8,7 +8,8 @@ reactiveSvg <- function (outputId)
 
 shinyUI(
   fluidPage(theme = "simplex.bootstrap.min.css",
-    tags$head(tags$link(rel = "icon", type = "image/png", href = "favicon.png")),
+    tags$head(tags$link(rel = "icon", type = "image/png", href = "favicon.png"),
+              includeScript('www/analytics.js')),
 
     fluidRow(
       column(1,
