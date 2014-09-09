@@ -1,5 +1,5 @@
 <!--code almost entirely from http://bl.ocks.org/4063663 Mike Bostock's d3 Brushable Scatterplot -->
-
+<!-- Shiny binding from https://github.com/timelyportfolio/shiny-d3-scatterplot -->
 <style>
 
 svg {
@@ -26,10 +26,10 @@ svg {
 }
 
 circle {
-  fill-opacity: .7;
+  fill-opacity: .6;
 }
 
-circle.hidden {
+circle.greyed {
   fill: #ccc !important;
 }
 
@@ -41,34 +41,48 @@ circle.hidden {
 
 </style>
 
-    
-    
-
-
-
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
 var networkOutputBinding = new Shiny.OutputBinding();
 $.extend(networkOutputBinding, {
     find: function(scope) {
-      return $(scope).find('.shiny-network-output');
+      return $(scope).find('.shiny-scatterplot-output');
     },
     renderValue: function(el, data) {
+      var logscale = data[1];
+      var maxPadding = data[2];
+      data = data[0];
+      if (data == null) return;
     
 //remove old graph    
-var svg = d3.select("#scatterplot").select("svg")
-                        .remove();
-    
+var svg = d3.select("#scatterplot").select("svg").remove();
+$("#scatterplot").empty();
 
-var width = 960,
-    size = 150,
-    padding = 19.5;
-        
-var x = d3.scale.linear()
+var svgWidth = $(".shiny-scatterplot-output").width();
+var rowCount = data.length;
+var colCount = Object.keys(data[0]).length;
+
+var padding = maxPadding;
+var relativeSize = (svgWidth / colCount) - (padding / colCount);
+var width = 100;
+var size = relativeSize;
+var pointRadius = Math.sqrt(relativeSize / Math.sqrt(rowCount));
+
+if (logscale == false) {
+  var x = d3.scale.linear()
+      .range([padding / 2, size - padding / 2]);
+  
+  var y = d3.scale.linear()
+      .range([size - padding / 2, padding / 2]);
+} else {
+  
+  var x = d3.scale.log()
     .range([padding / 2, size - padding / 2]);
-
-var y = d3.scale.linear()
+  
+  var y = d3.scale.log()
     .range([size - padding / 2, padding / 2]);
+}
+
 
 var xAxis = d3.svg.axis()
     .scale(x)
@@ -81,10 +95,9 @@ var yAxis = d3.svg.axis()
     .ticks(5);
 
 var color = d3.scale.category10();
-
-//d3.csv("www/flowers.csv", function(error, data) {
+  
   var domainByTrait = {},
-      traits = d3.keys(data[0]).filter(function(d) { return d !== "Date"; }),
+      traits = d3.keys(data[0]),
       n = traits.length;
 
   traits.forEach(function(trait) {
@@ -106,7 +119,6 @@ svg = d3.select("#scatterplot").append("svg")
       .on("brushstart", brushstart)
       .on("brush", brushmove)
       .on("brushend", brushend);
-
 
   svg.selectAll(".x.axis")
       .data(traits)
@@ -154,10 +166,10 @@ svg = d3.select("#scatterplot").append("svg")
       .enter().append("circle")
         .attr("cx", function(d) { return x(d[p.x]); })
         .attr("cy", function(d) { return y(d[p.y]); })
-        .attr("r", 3)
+        .attr("r", pointRadius)
         .style("fill", function(d) { return color(p.y+(d[p.y]>0)); });
-
     cell.call(brush);
+    
   }
 
   var brushCell;
@@ -175,7 +187,7 @@ svg = d3.select("#scatterplot").append("svg")
   // Highlight the selected circles.
   function brushmove(p) {
     var e = brush.extent();
-    svg.selectAll("circle").classed("hidden", function(d) {
+    svg.selectAll("circle").classed("greyed", function(d) {
       return e[0][0] > d[p.x] || d[p.x] > e[1][0]
           || e[0][1] > d[p.y] || d[p.y] > e[1][1];
     });
@@ -183,22 +195,23 @@ svg = d3.select("#scatterplot").append("svg")
 
   // If the brush is empty, select all circles.
   function brushend() {
-    if (brush.empty()) svg.selectAll(".hidden").classed("hidden", false);
+    if (brush.empty()){
+    svg.selectAll(".greyed").classed("greyed", false);
+    } 
+     var circleStates = d3.select('svg').select('g.cell').selectAll('circle')[0].map(function(d) {return d.className['baseVal']});
+     Shiny.onInputChange("mydata", circleStates);
   }
+  
 
   function cross(a, b) {
     var c = [], n = a.length, m = b.length, i, j;
     for (i = -1; ++i < n;) for (j = -1; ++j < m;) c.push({x: a[i], i: i, y: b[j], j: j});
     return c;
   }
+  
 
   d3.select(self.frameElement).style("height", size * n + padding + 20 + "px");
-//});
 
-    
-    
-    
-    
     }
   });
   Shiny.outputBindings.register(networkOutputBinding, 'timelyportfolio.networkbinding');

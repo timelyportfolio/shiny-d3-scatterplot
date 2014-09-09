@@ -1,20 +1,63 @@
-#enter any requires/library here
-require(quantmod)
-#require(PerformanceAnalytics)
+#max upload = 15 Mo
+options(shiny.maxRequestSize = 15*1024^2)
 
-shinyServer(function(input, output) {
-  #use the structure from trestletechnology example to load data
-  data <- reactive(function(){
-    getSymbols(c('VBMFX','VFINX','VDMIX','VEIEX'))
-    #combine date from xts and coredata to get a data.frame in the format best for JSON pass in Shiny
-    prices <- na.omit(merge(to.monthly(VBMFX)[,6],to.monthly(VFINX)[,6],to.monthly(VDMIX)[,6],to.monthly(VEIEX)[,6]))
-    returns <- prices / lag(prices, k=1) - 1
-    returns[1,] <- 0
-    data <- cbind(coredata(returns),format(index(returns),"%Y-%m-%d"))
-    #name columns same as the example
-    colnames(data) <- c('VBMFX','VFINX','VDMIX','VEIEX','Date')
-    data
+shinyServer(function(input, output, session) {
+  
+  baseData <- reactiveValues()
+  baseData$df <- mtcars
+  
+  observe({
+    if (!is.null(input$fileInput)){
+      updateColumns(session=session, columns="")
+      baseData$df <- read.csv(file=input$fileInput$datapath, header=input$header, sep=input$sep, quote=input$quote, dec=input$dec, stringsAsFactor=FALSE, check.names=FALSE)
+      updateColumns(session=session, columns=colnames(baseData$df[, sapply(baseData$df, is.numeric)]))
+    }
   })
   
-  output$scatterplot <- reactive(function() { data() })
+  
+  output$scatterplot <- reactive({
+    if (!is.null(input$columnSelection)){
+      scatterData <- baseData$df
+      scatterData <- as.matrix(scatterData[,input$columnSelection])
+      maxPadding <- ceiling(log10(max(scatterData))) * 10
+      return(list(scatterData, input$logscale, maxPadding))    
+    } else {
+     return()
+    }    
+  })
+  
+  output$outputTable <- renderDataTable({
+    dfFilter <- input$mydata
+    displayDF <- baseData$df
+    displayDF <- as.data.frame(cbind(names=row.names(displayDF), displayDF))
+    if (!is.null(displayDF)){
+      if (is.null(dfFilter)){
+        return(displayDF)
+      } else {
+        dfFilter[dfFilter==''] <- TRUE
+        dfFilter[dfFilter=='greyed'] <- FALSE
+        return(displayDF[dfFilter == TRUE,, drop=FALSE])
+      }
+    } else {
+      return()
+    }
+    
+  }, options = list(bPaginate = FALSE))
+
+
+output$downloadTable <- downloadHandler(
+  filename = "selectedData.csv",
+  content = function(file) {
+    dfFilter <- input$mydata
+    displayDF <- baseData$df
+    displayDF <- as.data.frame(cbind(names=row.names(displayDF), displayDF))
+        dfFilter[dfFilter==''] <- TRUE
+        dfFilter[dfFilter=='greyed'] <- FALSE
+        write.table(x=(displayDF[dfFilter == TRUE,, drop=FALSE]),file=file, row.names=FALSE, fileEncoding="utf8", sep=",")
+  }
+)
 })
+
+updateColumns <- function(session, columns, selection=""){
+  updateSelectInput(session=session, inputId="columnSelection", label="Columns to display", choices=as.vector(columns), selected=selection)
+}
